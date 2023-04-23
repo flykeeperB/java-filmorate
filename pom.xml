@@ -12,11 +12,8 @@
 	<artifactId>filmorate</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>filmorate</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Filmorate</description>
 	<properties>
-		<maven.compiler.release>11</maven.compiler.release>
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
 		<java.version>11</java.version>
 	</properties>
 	<dependencies>
