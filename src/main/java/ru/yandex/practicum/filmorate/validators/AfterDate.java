@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.validators;
 
-import jakarta.validation.Constraint;
-import jakarta.validation.Payload;
-import jakarta.validation.constraints.NotBlank;
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import javax.validation.constraints.NotBlank;
 
 import java.lang.annotation.*;
 
