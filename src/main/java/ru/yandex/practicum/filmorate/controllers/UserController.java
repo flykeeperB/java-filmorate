@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+
 import java.util.List;
 
 @RestController
@@ -23,7 +24,7 @@ public class UserController extends Controller<User> {
     public User create(@Valid @RequestBody User user) {
         log.info("POST: /users");
         super.create(user);
-        log.info("Сведения о пользоватеме внесены, присвоен идентификатор ["+user.getId()+"].");
+        log.info("Сведения о пользоватеме внесены, присвоен идентификатор [" + user.getId() + "].");
         return user;
     }
 

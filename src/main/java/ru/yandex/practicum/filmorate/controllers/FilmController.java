@@ -17,7 +17,7 @@ public class FilmController extends Controller<Film> {
     public Film create(@Valid @RequestBody Film film) {
         log.info("POST: /films");
         super.create(film);
-        log.info("Сведения о фильме внесены, присвоен идентификатор ["+film.getId()+"].");
+        log.info("Сведения о фильме внесены, присвоен идентификатор [" + film.getId() + "].");
         return film;
     }
 

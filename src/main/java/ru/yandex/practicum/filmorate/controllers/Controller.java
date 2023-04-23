@@ -22,7 +22,7 @@ public abstract class Controller<T extends IdObject> {
 
     public T create(@Valid @RequestBody T target) {
         target.setId(createId());
-        storage.put(target.getId(),target);
+        storage.put(target.getId(), target);
         return target;
     }
 
