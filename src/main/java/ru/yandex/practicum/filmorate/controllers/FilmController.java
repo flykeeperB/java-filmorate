@@ -10,7 +10,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(value = "/films")
-public class FilmController extends Controller<Film> {
+public class FilmController extends AbstractController<Film> {
 
     @PostMapping
     @Override

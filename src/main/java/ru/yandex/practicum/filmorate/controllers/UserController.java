@@ -10,7 +10,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(value = "/users")
-public class UserController extends Controller<User> {
+public class UserController extends AbstractController<User> {
 
     @GetMapping
     @Override

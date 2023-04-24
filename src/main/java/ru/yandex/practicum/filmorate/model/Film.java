@@ -7,7 +7,7 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.validators.AfterDate;
 
 @Data
-public class Film extends IdObject {
+public class Film extends AbstractRecord {
 
     @NotBlank(message = "Название не может быть пустым")
     private String name;

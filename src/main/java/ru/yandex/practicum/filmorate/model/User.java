@@ -6,7 +6,7 @@ import javax.validation.constraints.*;
 import lombok.Data;
 
 @Data
-public class User extends IdObject {
+public class User extends AbstractRecord {
 
     @NotBlank(message = "Не задан адрес электронной почты")
     @Email(message = "Неверный адрес электронной почты")

@@ -2,15 +2,15 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import javax.validation.Valid;
 import org.springframework.web.bind.annotation.RequestBody;
-import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
-import ru.yandex.practicum.filmorate.model.IdObject;
+import ru.yandex.practicum.filmorate.model.AbstractRecord;
 
 import java.util.*;
 
 //Добавляем абстрактный класс, определяющий основу для реализации CRUD в контроллерах
 
-public abstract class Controller<T extends IdObject> {
+public abstract class AbstractController<T extends AbstractRecord> {
 
     protected Map<Integer, T> storage = new HashMap<>();
 
@@ -35,7 +35,7 @@ public abstract class Controller<T extends IdObject> {
             throw new ValidationException("Идентификатор не задан!");
         }
         if (!storage.containsKey(target.getId())) {
-            throw new FilmNotFoundException("Запись с идентификатором [" + target.getId() + "] не найдена!");
+            throw new NotFoundException("Запись с идентификатором [" + target.getId() + "] не найдена!");
         }
         storage.put(target.getId(), target);
         return target;
@@ -46,7 +46,7 @@ public abstract class Controller<T extends IdObject> {
             throw new ValidationException("Идентификатор не задан!");
         }
         if (storage.remove(id) == null) {
-            throw new FilmNotFoundException("Запись с идентификатором [" + id + "] не найдена!");
+            throw new NotFoundException("Запись с идентификатором [" + id + "] не найдена!");
         }
         storage.remove(id);
     }
