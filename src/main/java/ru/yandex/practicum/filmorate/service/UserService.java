@@ -15,7 +15,6 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 @Service
 public class UserService {
-    final String SELFFRIENDING_NOT_ALLOWED = "Добавление себя в свои друзья не допускается";
 
     private final UserStorage storage;
 
@@ -34,7 +33,7 @@ public class UserService {
         checkUserId(friendId);
 
         if (userId.equals(friendId)) {
-            throw new ValidationException(SELFFRIENDING_NOT_ALLOWED);
+            throw new ValidationException("Добавление себя в свои друзья не допускается");
         }
 
         //Взаимно добавляем идентификаторы друзей
@@ -47,7 +46,7 @@ public class UserService {
         checkUserId(userId);
         checkUserId(friendId);
         if (userId.equals(friendId)) {
-            throw new ValidationException(SELFFRIENDING_NOT_ALLOWED);
+            throw new ValidationException("Добавление себя в свои друзья не допускается");
         }
 
         //Взаимно удаляем идентификаторы друзей
