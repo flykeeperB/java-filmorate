@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping(value = "/users")
 public class UserController extends AbstractController<User> {
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(@Qualifier("InMemoryUserStorage") UserStorage storage,

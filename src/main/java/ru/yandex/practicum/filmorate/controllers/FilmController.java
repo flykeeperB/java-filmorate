@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping(value = "/films")
 public class FilmController extends AbstractController<Film> {
 
-    private FilmService filmService;
+    private final FilmService filmService;
 
     @Autowired
     public FilmController(@Qualifier("InMemoryFilmStorage") FilmStorage storage,

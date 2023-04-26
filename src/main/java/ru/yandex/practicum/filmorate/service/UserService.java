@@ -17,7 +17,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 public class UserService {
     final String SELFFRIENDING_NOT_ALLOWED = "Добавление себя в свои друзья не допускается";
 
-    final private UserStorage storage;
+    private final UserStorage storage;
 
     @Autowired
     public UserService(@Qualifier("InMemoryUserStorage") UserStorage storage) {

@@ -15,5 +15,5 @@ public interface Storage<T extends AbstractRecord> {
 
     void delete(Integer id);
 
-    public void validateId(Integer id);
+    void validateId(Integer id);
 }
