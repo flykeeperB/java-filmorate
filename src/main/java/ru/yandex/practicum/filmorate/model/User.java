@@ -1,8 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
+import java.util.Set;
+import java.util.HashSet;
 
 import javax.validation.constraints.*;
+
 import lombok.Data;
 
 @Data
@@ -21,6 +24,8 @@ public class User extends AbstractRecord {
     @NotNull(message = "Не указана дата рождения пользователя")
     @PastOrPresent(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
+
+    private Set<Integer> friends = new HashSet<>();
 
     public String getName() {
         if (name == null || name.isBlank()) {
