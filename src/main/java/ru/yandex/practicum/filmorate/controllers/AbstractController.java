@@ -1,54 +1,44 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import javax.validation.Valid;
-import org.springframework.web.bind.annotation.RequestBody;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.AbstractRecord;
+import ru.yandex.practicum.filmorate.service.AbstractService;
+import ru.yandex.practicum.filmorate.storage.Storage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-//Добавляем абстрактный класс, определяющий основу для реализации CRUD в контроллерах
+//Абстрактная снова для реализации контроллеров
 
-public abstract class AbstractController<T extends AbstractRecord> {
+public abstract class AbstractController<
+        E extends AbstractRecord,
+        S extends Storage<E>,
+        T extends AbstractService<E, S>> {
 
-    protected Map<Integer, T> storage = new HashMap<>();
+    protected T service;
 
-    protected int lastId = 0;
-
-    protected int createId() {
-        return ++lastId;
+    public AbstractController(T service) {
+        this.service = service;
     }
 
-    public T create(@Valid @RequestBody T target) {
-        target.setId(createId());
-        storage.put(target.getId(), target);
+    public E create(E target) {
+        service.create(target);
         return target;
     }
 
-    public List<T> read() {
-        return new ArrayList<T>(storage.values());
+    public E get(Integer id) {
+        return service.get(id);
     }
 
-    public T update(@Valid @RequestBody T target) {
-        if (target.getId() == null) {
-            throw new ValidationException("Идентификатор не задан!");
-        }
-        if (!storage.containsKey(target.getId())) {
-            throw new NotFoundException("Запись с идентификатором [" + target.getId() + "] не найдена!");
-        }
-        storage.put(target.getId(), target);
-        return target;
+    public List<E> getAll() {
+        return new ArrayList<>(service.getAll());
+    }
+
+    public E update(E target) {
+        return service.update(target);
     }
 
     public void delete(Integer id) {
-        if (id == null) {
-            throw new ValidationException("Идентификатор не задан!");
-        }
-        if (storage.remove(id) == null) {
-            throw new NotFoundException("Запись с идентификатором [" + id + "] не найдена!");
-        }
-        storage.remove(id);
+        service.delete(id);
     }
 
 }

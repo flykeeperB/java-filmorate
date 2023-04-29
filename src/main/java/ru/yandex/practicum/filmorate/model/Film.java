@@ -1,8 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
+import java.util.Set;
+import java.util.HashSet;
 
 import javax.validation.constraints.*;
+
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validators.AfterDate;
 
@@ -20,4 +23,10 @@ public class Film extends AbstractRecord {
 
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private int duration;
+
+    private Set<Integer> likes = new HashSet<>();
+
+    public Integer getLikesCount() {
+        return this.likes.size();
+    }
 }
