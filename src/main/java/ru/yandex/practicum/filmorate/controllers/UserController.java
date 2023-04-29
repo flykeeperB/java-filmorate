@@ -4,7 +4,6 @@ import javax.validation.Valid;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -15,16 +14,11 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(value = "/users")
-public class UserController extends AbstractController<User> {
-
-    private final UserService userService;
+public class UserController extends AbstractController<User, UserStorage, UserService> {
 
     @Autowired
-    public UserController(@Qualifier("InMemoryUserStorage") UserStorage storage,
-                          UserService userService) {
-        super(storage);
-        this.storage = storage;
-        this.userService = userService;
+    public UserController(UserService userService) {
+        super(userService);
     }
 
     @PostMapping
@@ -40,7 +34,7 @@ public class UserController extends AbstractController<User> {
     @Override
     public User get(@PathVariable Integer id) {
         log.info("GET: /users/" + id);
-        return storage.read(id);
+        return super.get(id);
     }
 
     @GetMapping
@@ -70,24 +64,24 @@ public class UserController extends AbstractController<User> {
     @GetMapping("/{id}/friends")
     public Iterable<User> getFriends(@PathVariable Integer id) {
         log.info("GET: /" + id + "/friends");
-        return userService.getFriends(id);
+        return service.getFriends(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
         log.info("PUT: /" + id + "/friends/" + friendId);
-        userService.addFriend(id, friendId);
+        service.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
         log.info("DELETE: /" + id + "/friends/" + friendId);
-        userService.deleteFriend(id, friendId);
+        service.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public Iterable<User> getCommonFriends(@PathVariable Integer id, @PathVariable Integer otherId) {
         log.info("PUT: /" + id + "/friends/common/" + otherId);
-        return userService.getCommonFriends(id, otherId);
+        return service.getCommonFriends(id, otherId);
     }
 }

@@ -1,39 +1,44 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import ru.yandex.practicum.filmorate.model.AbstractRecord;
+import ru.yandex.practicum.filmorate.service.AbstractService;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-//Добавляем абстрактный класс, определяющий основу для реализации контроллеров
+//Абстрактная снова для реализации контроллеров
 
-public abstract class AbstractController<T extends AbstractRecord> {
+public abstract class AbstractController<
+        E extends AbstractRecord,
+        S extends Storage<E>,
+        T extends AbstractService<E, S>> {
 
-    protected Storage<T> storage;
+    protected T service;
 
-    public AbstractController(Storage<T> storage) {
-        this.storage = storage;
+    public AbstractController(T service) {
+        this.service = service;
     }
 
-    public T create(T target) {
-        storage.create(target);
+    public E create(E target) {
+        service.create(target);
         return target;
     }
 
-    public T get(Integer id) {
-        return storage.read(id);
+    public E get(Integer id) {
+        return service.get(id);
     }
 
-    public List<T> getAll() {
-        return new ArrayList<T>(storage.readAll());
+    public List<E> getAll() {
+        return new ArrayList<>(service.getAll());
     }
 
-    public T update(T target) {
-        return storage.update(target);
+    public E update(E target) {
+        return service.update(target);
     }
 
     public void delete(Integer id) {
-        storage.delete(id);
+        service.delete(id);
     }
 
 }

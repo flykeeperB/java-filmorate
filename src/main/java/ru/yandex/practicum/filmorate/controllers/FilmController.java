@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -15,16 +14,11 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(value = "/films")
-public class FilmController extends AbstractController<Film> {
-
-    private final FilmService filmService;
+public class FilmController extends AbstractController<Film, FilmStorage, FilmService> {
 
     @Autowired
-    public FilmController(@Qualifier("InMemoryFilmStorage") FilmStorage storage,
-                          FilmService filmService) {
-        super(storage);
-        this.storage = storage;
-        this.filmService = filmService;
+    public FilmController(FilmService filmService) {
+        super(filmService);
     }
 
     @PostMapping
@@ -40,7 +34,7 @@ public class FilmController extends AbstractController<Film> {
     @Override
     public Film get(@PathVariable Integer id) {
         log.info("GET: /films/" + id);
-        return storage.read(id);
+        return super.get(id);
     }
 
     @GetMapping
@@ -70,20 +64,20 @@ public class FilmController extends AbstractController<Film> {
     @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         log.info("GET: /films/popular");
-        return filmService.getPopularFilms(count);
+        return service.getPopularFilms(count);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable Integer id, @PathVariable Integer userId) {
         log.info("PUT: /films/" + id + "/like/" + userId);
-        filmService.addLike(id, userId);
+        service.addLike(id, userId);
         log.info("Сведения о лайке под фильмом добавлены.");
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable Integer id, @PathVariable Integer userId) {
         log.info("DELETE: /films/" + id + "/like/" + userId);
-        filmService.deleteLike(id, userId);
+        service.deleteLike(id, userId);
         log.info("Сведения о лайке под фильмом удалены.");
     }
 }
