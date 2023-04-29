@@ -8,12 +8,10 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
-public class FilmService {
-    private final FilmStorage storage;
+public class FilmService extends AbstractService<Film, FilmStorage> {
     private final UserStorage userStorage;
 
     @Autowired
@@ -23,39 +21,23 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
-    public void checkFilmId(Integer id) {
-        storage.validateId(id);
-    }
-
     public void checkUserId(Integer id) {
-        storage.validateId(id);
+        userStorage.validateId(id);
     }
 
     public void addLike(Integer filmId, Integer userId) {
-        //проверяем идентификаторы
-        checkFilmId(filmId);
         checkUserId(userId);
 
-        //Добавляем лайк
-        storage.read(filmId).getLikes().add(userId);
+        storage.addLike(filmId, userId);
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
-        //проверяем идентификаторы
-        checkFilmId(filmId);
         checkUserId(userId);
 
-        //Удаляем лайк
-        storage.read(filmId).getLikes().add(userId);
+        storage.deleteLike(filmId, userId);
     }
 
     public List<Film> getPopularFilms(Integer limit) {
-        //Сортируем, разворачиваем, образаем по limit
-        return storage
-                .readAll()
-                .stream()
-                .sorted(Comparator.comparingInt(Film::getLikesCount).reversed())
-                .limit(limit)
-                .collect(Collectors.toList());
+        return storage.getPopularFilms(limit);
     }
 }
