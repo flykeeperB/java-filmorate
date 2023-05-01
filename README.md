@@ -5,7 +5,6 @@ Filmorate - бэкэнд-решение системы рейтинга кино
 
 ### ER-диаграма
 ![ER diagram](src/main/resources/schema.png)
-<img alt=”Схема базы данных” src=”src/main/resources/schema.png”>
 
 ### Первоначальное заполнение данными справочников
 
