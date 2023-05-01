@@ -3,6 +3,8 @@ Filmorate - бэкэнд-решение системы рейтинга кино
 
 ## База данных
 
+Структура (SQL)[schema.sql](src/main/resources/schema.sql)
+
 ### ER-диаграма
 ![ER diagram](src/main/resources/schema.png)
 
