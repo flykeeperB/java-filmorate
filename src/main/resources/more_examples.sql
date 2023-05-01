@@ -45,3 +45,36 @@ VALUES ('Вызов',
 'Торакальный хирург Женя за месяц должна подготовиться к космическому полету, чтобы отправиться на МКС и спасти заболевшего космонавта. Ей придётся преодолеть неуверенность и страхи, а также провести сложнейшую операцию в условиях невесомости, от которой зависят шансы космонавта вернуться на Землю живым.', 
 '2023-04-20', 164, null);
 	
+	
+INSERT INTO users (email, login, name, birthday)  
+VALUES ('ivanovii5432@yandex.ru', 'ivanovii5432', 'Иванов Иван Иванович', '1978-01-12'),
+       ('lyal555444@yandex.ru','lyal','Лялина Ирина Михайловна','1995-01-13'),
+	   ('movermover@yandex.ru','moverman','Сидоров Петр','1985-06-10'),
+	   ('rapuncel@yandex.ru','rapuncel','Рыдакова Маргарита Михайловна','1989-09-28');
+	   
+INSERT INTO friendships (from_user_id, to_from_user_id) 
+VALUES  (1,4), 
+		(1,2),
+		(2,4),
+		(3,2);
+		
+UPDATE friendships SET is_confirmed=TRUE WHERE from_user_id=1 AND to_user_id=2
+	   
+INSERT INTO film_likes (film_id,user_id) 
+VALUES  (1,1),
+		(2,1),
+		(3,1),
+		(1,2),
+		(3,2),
+		(2,3),
+		(3,3),
+		(1,4),
+		(3,4);
+		
+INSERT INTO film_genres (film_id, genre_id) 
+VALUES  (1,1), 
+		(1,2),
+		(2,6),
+		(3,2),
+		(3,7);
+	

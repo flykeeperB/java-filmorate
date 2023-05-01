@@ -26,7 +26,8 @@ VALUES (1, 'Комедия'),
        (3, 'Мультфильм'),
        (4, 'Триллер'),
        (5, 'Документальный'),
-       (6, 'Боевик')
+       (6, 'Боевик'),
+	   (7, 'Фантастика')
 ON CONFLICT DO NOTHING;
 ```
 
@@ -61,7 +62,7 @@ VALUES ('Вызов',
 
 *mpa_rating_id=null, поскольку этому российскому фильму не присваивался рейтинг MPA
 
-<b>Получение всех записей о фильмах:</b>
+<b>Получение всех записей о фильмах (включая данные о рейтинге MPA и жанрах):</b>
 
 ```SQL
 SELECT f.film_id,
@@ -69,8 +70,8 @@ SELECT f.film_id,
        f.description,
        f.release_date,
        f.duration,
-       ARRAY_AGG(m.name) AS mpa_rating,
-       ARRAY_AGG(g.name) AS genres
+       STRING_AGG(DISTINCT m.name, ', ') AS mpa_rating,
+       STRING_AGG(DISTINCT g.name, ', ') AS genres
 FROM films f
          LEFT JOIN mpa_ratings m ON f.mpa_rating_id = m.mpa_rating_id
          LEFT JOIN film_genres fg ON f.film_id = fg.film_id
@@ -86,8 +87,8 @@ SELECT f.film_id,
        f.description,
        f.release_date,
        f.duration,
-       ARRAY_AGG(m.name) AS mpa_rating,
-       ARRAY_AGG(g.name) AS genres
+       STRING_AGG(DISTINCT m.name, ', ') AS mpa_rating,
+       STRING_AGG(DISTINCT g.name, ', ') AS genres
 FROM films f
          LEFT JOIN mpa_ratings m ON f.mpa_rating_id = m.mpa_rating_id
          LEFT JOIN film_genres fg ON f.film_id = fg.film_id
@@ -96,19 +97,73 @@ WHERE f.film_id=1
 GROUP BY f.film_id;
 ```
 
+<b>Добавление лайка фильму</b>
+
+```SQL
+INSERT INTO film_likes (film_id,user_id) VALUES (1,1)
+```
+
+<b>Добавление сведений о жанре фильма
+
+```SQL
+INSERT INTO film_genres (film_id, genre_id) VALUES (1,1), (1,2)
+```
+
 <b>Получение записей популярных фильмов (с ограничением количества - 9):</b>
 
 ```SQL
-SELECT f.name AS name
+SELECT f.name AS name, COUNT(l.user_id) as likes
 FROM films AS f
 INNER JOIN film_likes AS l ON l.film_id=f.film_id
 GROUP BY f.film_id
-ORDER BY COUNT(l.user_id)
+ORDER BY COUNT(l.user_id) DESC
 LIMIT 9;
 ```
 
+<h2>Операции с пользователями</h2>
 
+<b>Добавление записи о пользователе</b>
 
+```SQL
+INSERT INTO users (email, login, name, birthday)  
+VALUES ('ivanovii5432@yandex.ru', 
+		'ivanovii5432', 
+		'Иванов Иван Иванович', 
+		'1978-01-12')
+```
 
+<b>Получение списка всех пользователе</b>
 
+```SQL
+SELECT * FROM users;
+```
 
+<b>Получение записи конкретного пользователя (id=1)</b>
+
+```SQL
+SELECT * FROM users WHERE id=1;
+```
+
+<b>Добавление запроса на дружбу с пользователем (from_user_id = 1, to_user_id = 2)</b>
+
+```SQL
+INSERT INTO friendships (from_user_id, to_user_id) VALUES  (1,2)
+```
+
+<b>Подтверждение статуса дружбы (from_user_id = 1, to_user_id = 2)</b>
+
+```SQL
+UPDATE friendships SET is_confirmed=TRUE WHERE from_user_id=1 AND to_user_id=2
+```
+
+<b>Получение списка друзей пользователя (user_id = 1)</b>
+
+```SQL
+SELECT users.* FROM users
+JOIN friendships as f ON users.user_id=f.from_user_id AND f.to_user_id=1
+WHERE is_confirmed=TRUE
+UNION
+SELECT users.* FROM users
+JOIN friendships as f ON users.user_id=f.to_user_id AND f.from_user_id=1
+WHERE is_confirmed=TRUE
+```
