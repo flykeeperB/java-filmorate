@@ -41,6 +41,7 @@ public abstract class AbstractGenericDao<T extends AbstractRecord> implements St
         return this.table;
     }
 
+    //получение списка полей
     protected List<String> getFields() {
         return new ArrayList<>(Arrays.asList("*"));
     }
