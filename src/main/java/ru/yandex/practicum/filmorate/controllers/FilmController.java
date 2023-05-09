@@ -65,7 +65,7 @@ public class FilmController extends AbstractController<Film, FilmStorage, FilmSe
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "-1") int count) {
         log.info("GET: /films/popular");
         return service.getPopularFilms(count);
     }

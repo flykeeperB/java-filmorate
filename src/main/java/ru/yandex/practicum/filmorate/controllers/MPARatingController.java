@@ -53,7 +53,7 @@ public class MPARatingController extends AbstractController<MPARating,
     @Override
     public MPARating update(@Valid @RequestBody MPARating mpaRating) {
         log.info("PUT: /mpa");
-        return  super.update(mpaRating);
+        return super.update(mpaRating);
     }
 
     @DeleteMapping("/{id}")

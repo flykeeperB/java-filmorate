@@ -53,7 +53,7 @@ public class UserController extends AbstractController<User, UserStorage, UserSe
     @Override
     public User update(@Valid @RequestBody User user) {
         log.info("PUT: /users");
-        return  super.update(user);
+        return super.update(user);
     }
 
     @DeleteMapping("/{id}")

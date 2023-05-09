@@ -41,7 +41,6 @@ CREATE TABLE IF NOT EXISTS friendships
 (
     from_user_id      INTEGER REFERENCES users (id) ON DELETE CASCADE,
     to_user_id        INTEGER REFERENCES users (id) ON DELETE CASCADE,
-	is_confirmed      BOOLEAN NOT NULL DEFAULT FALSE,
 	PRIMARY KEY (from_user_id, to_user_id)
 );
 

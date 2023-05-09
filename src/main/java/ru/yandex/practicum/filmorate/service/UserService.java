@@ -18,20 +18,18 @@ public class UserService extends AbstractService<User, UserStorage> {
     }
 
     public void addFriend(Integer userId, Integer friendId) {
-      //  storage.addFriend(userId, friendId);
+        storage.addFriend(userId, friendId);
     }
 
     public void deleteFriend(Integer userId, Integer friendId) {
-      //  storage.deleteFriend(userId, friendId);
+        storage.deleteFriend(userId, friendId);
     }
 
     public List<User> getFriends(Integer userId) {
-      //  return storage.getFriends(userId);
-        return null;
+        return storage.getFriends(userId);
     }
 
     public List<User> getCommonFriends(Integer leftUserId, Integer rightUserId) {
-     //   return storage.getCommonFriends(leftUserId, rightUserId);
-        return null;
+        return storage.getCommonFriends(leftUserId, rightUserId);
     }
 }

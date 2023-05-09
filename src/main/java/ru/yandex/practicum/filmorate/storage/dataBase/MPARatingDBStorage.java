@@ -14,7 +14,7 @@ import java.util.Map;
 public class MPARatingDBStorage extends AbstractGenericDao<MPARating> implements MPARatingStorage {
 
     //Кэш для ускорения обработки запросов
-    HashMap<Integer,MPARating> cache;
+    HashMap<Integer, MPARating> cache;
 
     public MPARatingDBStorage(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate, "mpa_ratings");
@@ -24,19 +24,19 @@ public class MPARatingDBStorage extends AbstractGenericDao<MPARating> implements
     @Override
     protected MPARating mapRow(ResultSet resultSet, int i) throws SQLException {
         MPARating result = new MPARating(resultSet.getString("name"),
-                                        resultSet.getString("description"));
+                resultSet.getString("description"));
         result.setId(resultSet.getInt("id"));
         return result;
     }
 
     @Override
-    protected Map<String,String> getValues(MPARating mpaRating) {
-        Map<String,String> values = new HashMap<>();
-        if (mpaRating.getId()!=null) {
-            values.put("id",mpaRating.getId().toString());
+    protected Map<String, String> getValues(MPARating mpaRating) {
+        Map<String, String> values = new HashMap<>();
+        if (mpaRating.getId() != null) {
+            values.put("id", mpaRating.getId().toString());
         }
-        values.put("name",mpaRating.getName());
-        values.put("description",mpaRating.getDescription());
+        values.put("name", mpaRating.getName());
+        values.put("description", mpaRating.getDescription());
         return values;
     }
 
@@ -44,7 +44,7 @@ public class MPARatingDBStorage extends AbstractGenericDao<MPARating> implements
     public MPARating read(Integer id) {
         validateId(id);
         if (!cache.containsKey(id)) {
-            cache.put(id,super.read(id));
+            cache.put(id, super.read(id));
         }
         return cache.get(id);
     }

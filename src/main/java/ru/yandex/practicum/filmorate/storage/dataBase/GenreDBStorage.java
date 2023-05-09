@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage.dataBase;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
@@ -12,14 +11,13 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Slf4j
 @Component("GenreDBStorage")
 public class GenreDBStorage extends AbstractGenericDao<Genre> implements GenreStorage {
 
     //Кэш для ускорения обработки запросов
-    HashMap<Integer,Genre> cache;
+    HashMap<Integer, Genre> cache;
 
     public GenreDBStorage(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate, "genres");
@@ -34,12 +32,12 @@ public class GenreDBStorage extends AbstractGenericDao<Genre> implements GenreSt
     }
 
     @Override
-    protected Map<String,String> getValues(Genre genre) {
-        Map<String,String> values = new HashMap<>();
-        if (genre.getId()!=null) {
-            values.put("id",genre.getId().toString());
+    protected Map<String, String> getValues(Genre genre) {
+        Map<String, String> values = new HashMap<>();
+        if (genre.getId() != null) {
+            values.put("id", genre.getId().toString());
         }
-        values.put("name",genre.getName());
+        values.put("name", genre.getName());
         return values;
     }
 
@@ -47,7 +45,7 @@ public class GenreDBStorage extends AbstractGenericDao<Genre> implements GenreSt
     public Genre read(Integer id) {
         validateId(id);
         if (!cache.containsKey(id)) {
-            cache.put(id,super.read(id));
+            cache.put(id, super.read(id));
         }
         return cache.get(id);
     }
@@ -68,10 +66,10 @@ public class GenreDBStorage extends AbstractGenericDao<Genre> implements GenreSt
 
     @Override
     public List<Genre> getGenresForFilm(Integer filmId) {
-        String sql = "SELECT g.* FROM film_genres AS fg LEFT JOIN "+
-                "genres as g ON fg.genre_id=g.id "+
+        String sql = "SELECT g.* FROM film_genres AS fg LEFT JOIN " +
+                "genres as g ON fg.genre_id=g.id " +
                 "WHERE fg.film_id=?";
-        log.info("RUN SQL "+sql);
+        log.info("RUN SQL " + sql);
         return jdbcTemplate.query(sql, this::mapRow, filmId);
     }
 }

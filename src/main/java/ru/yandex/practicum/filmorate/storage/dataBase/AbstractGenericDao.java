@@ -48,65 +48,71 @@ public abstract class AbstractGenericDao<T extends AbstractRecord> implements St
     abstract T mapRow(ResultSet resultSet, int i) throws SQLException;
 
     //Возвращает набор значений полей (key=>value) для формирования запроса на добавление/обновление
-    abstract protected Map<String,String> getValues(T t);
+    abstract protected Map<String, String> getValues(T t);
 
     @Override
     public List<T> readAll() {
-        String sql = "SELECT "+
-                String.join(", ", getFields())+
-                " FROM "+getTable()+" ORDER BY id";
+        String sql = "SELECT " +
+                String.join(", ", getFields()) +
+                " FROM " + getTable() + " ORDER BY id";
         return jdbcTemplate.query(sql, this::mapRow);
-    };
+    }
+
+    ;
 
     @Override
     public T create(T o) {
-        Map<String,String> values = this.getValues(o);
+        Map<String, String> values = this.getValues(o);
         List<String> fieldNames = new ArrayList<>(values.keySet());
         var keyHolder = new GeneratedKeyHolder();
 
-        String sql = "INSERT INTO "+table+" ("+ String.join(", ", fieldNames)+") VALUES ("+
-                String.join(", ", addColonBeforeString(fieldNames))+")";
+        String sql = "INSERT INTO " + table + " (" + String.join(", ", fieldNames) + ") VALUES (" +
+                String.join(", ", addColonBeforeString(fieldNames)) + ")";
 
         var params = new MapSqlParameterSource(values);
 
         int rows = namedParameterJdbcTemplate.update(sql, params, keyHolder);
         if (rows > 0) {
             o.setId(keyHolder.getKey().intValue());
-            log.info("Запись успешно добавлена, идентификатор="+keyHolder.getKey().intValue());
+            log.info("Запись успешно добавлена, идентификатор=" + keyHolder.getKey().intValue());
         } else {
-            log.info("SQL="+sql);
+            log.info("SQL " + sql);
             throw new NotFoundException("Запись не добавлена.");
         }
 
         T result = this.read(keyHolder.getKey().intValue());
         return result;
-    };
+    }
+
+    ;
 
     @Override
     public T read(Integer id) {
         validateId(id);
-        String sql = "SELECT "+
-                String.join(", ", getFields())+
-                " FROM "+getTable()+" "+
+        String sql = "SELECT " +
+                String.join(", ", getFields()) +
+                " FROM " + getTable() + " " +
                 " WHERE id=?";
-        log.info("RUN SQL="+sql);
+        log.info("RUN SQL=" + sql);
         try {
             return jdbcTemplate.queryForObject(sql, this::mapRow, id);
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException("Запись с идентификатором не найдена.");
         }
-    };
+    }
+
+    ;
 
     @Override
     public T update(T o) {
-        Map<String,String> values = this.getValues(o);
+        Map<String, String> values = this.getValues(o);
         List<String> fieldNames = new ArrayList<>(values.keySet());
         for (int i = 0; i < fieldNames.size(); i++) {
-            fieldNames.set(i,fieldNames.get(i)+"= :"+fieldNames.get(i));
+            fieldNames.set(i, fieldNames.get(i) + "= :" + fieldNames.get(i));
         }
 
-        String sql = "UPDATE "+table+" SET "+
-                String.join(", ", fieldNames)+" "+
+        String sql = "UPDATE " + table + " SET " +
+                String.join(", ", fieldNames) + " " +
                 "WHERE id= :id";
         var params = new MapSqlParameterSource(values);
         int status = namedParameterJdbcTemplate.update(sql, params);
@@ -118,31 +124,38 @@ public abstract class AbstractGenericDao<T extends AbstractRecord> implements St
         }
 
         return this.read(o.getId());
-    };
+    }
+
+    ;
 
     @Override
     public void delete(Integer id) {
         validateId(id);
-        String sql = "DELETE FROM "+table+" WHERE id= :id";
-        int rows = jdbcTemplate.update(sql);
+        String sql = "DELETE FROM " + table + " WHERE id=?";
+        int rows = jdbcTemplate.update(sql, id);
         if (rows > 0) {
             log.info("Запись удалена.");
         } else {
             throw new NotFoundException("Запись не удалена.");
         }
-    };
+    }
+
+    ;
 
     @Override
     public void validateId(Integer id) {
         if (id == null) {
             throw new ValidationException("Идентификатор не задан.");
         }
+        if (id < 1) {
+            throw new NotFoundException("Запись по неверному идентификатору не может быть найдена.");
+        }
     }
 
-    static List<String> addColonBeforeString (List<String> targetList) {
+    static List<String> addColonBeforeString(List<String> targetList) {
         List<String> result = new ArrayList<>();
-        for(String element : targetList) {
-            result.add(":"+element);
+        for (String element : targetList) {
+            result.add(":" + element);
         }
         return result;
     }

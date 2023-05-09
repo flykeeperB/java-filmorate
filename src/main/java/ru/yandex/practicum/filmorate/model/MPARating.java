@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
-public class MPARating extends AbstractRecord{
+public class MPARating extends AbstractRecord {
     @NotNull(message = "Не указано наименование позиции рейтинга MPA.")
     private String name;
     private String Description;

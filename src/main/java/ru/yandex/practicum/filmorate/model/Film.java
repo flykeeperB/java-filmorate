@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
@@ -13,7 +12,6 @@ import javax.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validators.AfterDate;
 
 @Builder
@@ -39,18 +37,18 @@ public class Film extends AbstractRecord {
 
     private final Set<Genre> genres = new HashSet<>();
 
-    public void setGenres (List<Genre> genres) {
+    public void setGenres(List<Genre> genres) {
         this.genres.clear();
-        if (genres!=null) {
+        if (genres != null) {
             this.genres.addAll(genres);
-        };
+        }
     }
 
-    public void setLikes (List<Integer> likes) {
+    public void setLikes(List<Integer> likes) {
         this.likes.clear();
-        if (likes!=null) {
+        if (likes != null) {
             this.likes.addAll(likes);
-        };
+        }
     }
 
     public Integer getLikesCount() {
