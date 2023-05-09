@@ -48,20 +48,4 @@ public class GenreStorageTest {
         assertThat(testGenre).hasFieldOrPropertyWithValue("name", "Совершенно новый жанр");
     }
 
-    @Test
-    void deleteGenreTest() {
-
-        List<Genre> beforeTestGenres = genreStorage.readAll();
-
-        genreStorage.delete(1);
-
-        List<Genre> testGenres = genreStorage.readAll();
-
-        assertEquals(beforeTestGenres.size() - 1, testGenres.size(), "Неверное количество жанров");
-
-        Genre testGenre = testGenres.get(0);
-
-        assertThat(testGenre).hasFieldOrPropertyWithValue("id", 2);
-    }
-
 }

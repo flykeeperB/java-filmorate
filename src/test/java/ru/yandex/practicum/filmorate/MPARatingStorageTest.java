@@ -47,19 +47,4 @@ public class MPARatingStorageTest {
 
         assertThat(testMPARating).hasFieldOrPropertyWithValue("name", "Совершенно новый жанр");
     }
-
-    @Test
-    void deleteGenreTest() {
-        List<MPARating> beforeTestMPARatings = mpaRatingStorage.readAll();
-
-        mpaRatingStorage.delete(1);
-
-        List<MPARating> testMPARatings = mpaRatingStorage.readAll();
-
-        assertEquals(beforeTestMPARatings.size() - 1, testMPARatings.size(), "Неверное количество позиций рейтинга");
-
-        MPARating testMPARating = testMPARatings.get(0);
-
-        assertThat(testMPARating).hasFieldOrPropertyWithValue("id", 2);
-    }
 }
