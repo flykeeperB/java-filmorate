@@ -7,7 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 public interface FilmStorage extends Storage<Film> {
     List<Film> getPopularFilms(Integer limit);
 
-    void addLike(Integer film_id, Integer user_id);
+    void addLike(Integer filmId, Integer userId);
 
-    void removeLike(Integer film_id, Integer user_id);
+    void removeLike(Integer filmId, Integer userId);
 }
