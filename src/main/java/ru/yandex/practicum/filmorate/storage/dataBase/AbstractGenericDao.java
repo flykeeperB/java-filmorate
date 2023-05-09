@@ -24,12 +24,12 @@ import java.util.Map;
 public abstract class AbstractGenericDao<T extends AbstractRecord> implements Storage<T> {
 
     @NotNull
-    final protected JdbcTemplate jdbcTemplate;
+    protected final JdbcTemplate jdbcTemplate;
 
-    final protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    protected final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @NotBlank
-    final private String table;
+    private final String table;
 
     public AbstractGenericDao(JdbcTemplate jdbcTemplate, String table) {
         this.jdbcTemplate = jdbcTemplate;
@@ -49,7 +49,7 @@ public abstract class AbstractGenericDao<T extends AbstractRecord> implements St
     abstract T mapRow(ResultSet resultSet, int i) throws SQLException;
 
     //Возвращает набор значений полей (key=>value) для формирования запроса на добавление/обновление
-    abstract protected Map<String, String> getValues(T t);
+    protected abstract Map<String, String> getValues(T t);
 
     @Override
     public List<T> readAll() {
