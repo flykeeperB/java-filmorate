@@ -21,8 +21,7 @@ public abstract class AbstractController<
     }
 
     public E create(E target) {
-        service.create(target);
-        return target;
+        return service.create(target);
     }
 
     public E get(Integer id) {

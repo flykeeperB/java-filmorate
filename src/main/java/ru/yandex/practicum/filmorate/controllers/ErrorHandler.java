@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
 
+import java.util.NoSuchElementException;
+
 @RestControllerAdvice
 public class ErrorHandler {
 
@@ -22,5 +24,12 @@ public class ErrorHandler {
     public ErrorResponse handleNotFoundException(final NotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNoSuchElementException(final NoSuchElementException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
 
 }

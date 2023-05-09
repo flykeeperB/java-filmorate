@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage;
 import ru.yandex.practicum.filmorate.model.AbstractRecord;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface Storage<T extends AbstractRecord> {
     List<T> readAll();
