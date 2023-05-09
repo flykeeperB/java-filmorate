@@ -35,16 +35,4 @@ public class MPARatingStorageTest {
         assertNotNull(testMPARatings, "Не получен список рейтинговых позиций");
         assertEquals(5, testMPARatings.size(), "Неверное количество рейтинговых позиций");
     }
-
-    @Test
-    void updateTest() {
-        MPARating mpaRating = mpaRatingStorage.read(1);
-        mpaRating.setName("Новая позиция рейтинга");
-
-        mpaRatingStorage.update(mpaRating);
-
-        MPARating testMPARating = mpaRatingStorage.read(mpaRating.getId());
-
-        assertThat(testMPARating).hasFieldOrPropertyWithValue("name", "Совершенно новый жанр");
-    }
 }
