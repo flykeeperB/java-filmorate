@@ -24,12 +24,12 @@ import java.util.Map;
 public abstract class AbstractGenericDao<T extends AbstractRecord> implements Storage<T> {
 
     @NotNull
-    protected final JdbcTemplate jdbcTemplate;
+    final protected JdbcTemplate jdbcTemplate;
 
-    protected final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    final protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @NotBlank
-    private final String table;
+    final private String table;
 
     public AbstractGenericDao(JdbcTemplate jdbcTemplate, String table) {
         this.jdbcTemplate = jdbcTemplate;
