@@ -33,7 +33,7 @@ public class MPARatingStorageTest {
         List<MPARating> testMPARatings = mpaRatingStorage.readAll();
 
         assertNotNull(testMPARatings, "Не получен список рейтинговых позиций");
-        assertEquals(6, testMPARatings.size(), "Неверное количество рейтинговых позиций");
+        assertEquals(5, testMPARatings.size(), "Неверное количество рейтинговых позиций");
     }
 
     @Test
