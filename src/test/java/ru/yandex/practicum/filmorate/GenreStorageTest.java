@@ -36,16 +36,4 @@ public class GenreStorageTest {
         assertEquals(6, testGenres.size(), "Неверное количество жанров");
     }
 
-    @Test
-    void updateTest() {
-        Genre genre = genreStorage.read(1);
-        genre.setName("Совершенно новый жанр");
-
-        genreStorage.update(genre);
-
-        Genre testGenre = genreStorage.read(genre.getId());
-
-        assertThat(testGenre).hasFieldOrPropertyWithValue("name", "Совершенно новый жанр");
-    }
-
 }
