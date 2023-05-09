@@ -17,7 +17,7 @@ import java.util.Map;
 public class GenreDBStorage extends AbstractGenericDao<Genre> implements GenreStorage {
 
     //Кэш для ускорения обработки запросов
-    final protected HashMap<Integer, Genre> cache;
+    protected final  HashMap<Integer, Genre> cache;
 
     public GenreDBStorage(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate, "genres");

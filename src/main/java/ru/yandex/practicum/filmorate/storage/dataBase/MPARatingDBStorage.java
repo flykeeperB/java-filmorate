@@ -14,7 +14,7 @@ import java.util.Map;
 public class MPARatingDBStorage extends AbstractGenericDao<MPARating> implements MPARatingStorage {
 
     //Кэш для ускорения обработки запросов
-    final protected HashMap<Integer, MPARating> cache;
+    protected final HashMap<Integer, MPARating> cache;
 
     public MPARatingDBStorage(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate, "mpa_ratings");
