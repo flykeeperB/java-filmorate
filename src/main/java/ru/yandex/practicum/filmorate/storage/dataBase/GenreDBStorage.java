@@ -8,16 +8,17 @@ import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.HashMap;
 
 @Slf4j
 @Component("GenreDBStorage")
 public class GenreDBStorage extends AbstractGenericDao<Genre> implements GenreStorage {
 
     //Кэш для ускорения обработки запросов
-    protected final  HashMap<Integer, Genre> cache;
+    protected final HashMap<Integer, Genre> cache;
 
     public GenreDBStorage(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate, "genres");
@@ -65,11 +66,16 @@ public class GenreDBStorage extends AbstractGenericDao<Genre> implements GenreSt
     }
 
     @Override
-    public List<Genre> getGenresForFilm(Integer filmId) {
-        String sql = "SELECT g.* FROM film_genres AS fg LEFT JOIN " +
-                "genres as g ON fg.genre_id=g.id " +
-                "WHERE fg.film_id=?";
-        log.info("RUN SQL " + sql);
-        return jdbcTemplate.query(sql, this::mapRow, filmId);
+    public List<Genre> getGenres(Integer[] ids) {
+        //Обработка производится быстро благодаря кешированию
+        List<Genre> result = new ArrayList<>();
+        if (ids == null) {
+            return result;
+        }
+
+        for (Integer id : ids) {
+            result.add(read(id));
+        }
+        return result;
     }
 }

@@ -15,9 +15,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 @Slf4j
@@ -41,7 +41,6 @@ public abstract class AbstractGenericDao<T extends AbstractRecord> implements St
         return this.table;
     }
 
-    //получение списка полей
     protected List<String> getFields() {
         return new ArrayList<>(Arrays.asList("*"));
     }
@@ -51,15 +50,32 @@ public abstract class AbstractGenericDao<T extends AbstractRecord> implements St
     //Возвращает набор значений полей (key=>value) для формирования запроса на добавление/обновление
     protected abstract Map<String, String> getValues(T t);
 
-    @Override
-    public List<T> readAll() {
-        String sql = "SELECT " +
-                String.join(", ", getFields()) +
-                " FROM " + getTable() + " ORDER BY id";
-        return jdbcTemplate.query(sql, this::mapRow);
+    protected String getSelectSQL() {
+        List<String> fields = getFields();
+
+        StringBuilder sqlBuilder = new StringBuilder("SELECT ");
+        sqlBuilder.append(String.join(", ", fields));
+        sqlBuilder.append(" FROM ");
+        sqlBuilder.append(getTable());
+
+        return sqlBuilder.toString();
     }
 
-    ;
+    protected String getSelectGroupSQL() {
+        return "";
+    }
+
+    protected String getSelectOrderSQL() {
+        return " ORDER BY id";
+    }
+
+    @Override
+    public List<T> readAll() {
+        String sql = getSelectSQL()
+                + getSelectGroupSQL()
+                + getSelectOrderSQL();
+        return jdbcTemplate.query(sql, this::mapRow);
+    }
 
     @Override
     public T create(T o) {
@@ -81,19 +97,18 @@ public abstract class AbstractGenericDao<T extends AbstractRecord> implements St
             throw new NotFoundException("Запись не добавлена.");
         }
 
-        T result = this.read(keyHolder.getKey().intValue());
-        return result;
+        return this.read(keyHolder.getKey().intValue());
     }
-
-    ;
 
     @Override
     public T read(Integer id) {
         validateId(id);
-        String sql = "SELECT " +
-                String.join(", ", getFields()) +
-                " FROM " + getTable() + " " +
-                " WHERE id=?";
+
+        String sql = getSelectSQL() +
+                " WHERE " + getTable() + ".id=?" +
+                getSelectGroupSQL() +
+                getSelectOrderSQL();
+
         log.info("RUN SQL=" + sql);
         try {
             return jdbcTemplate.queryForObject(sql, this::mapRow, id);
@@ -102,15 +117,11 @@ public abstract class AbstractGenericDao<T extends AbstractRecord> implements St
         }
     }
 
-    ;
-
     @Override
     public T update(T o) {
         Map<String, String> values = this.getValues(o);
         List<String> fieldNames = new ArrayList<>(values.keySet());
-        for (int i = 0; i < fieldNames.size(); i++) {
-            fieldNames.set(i, fieldNames.get(i) + "= :" + fieldNames.get(i));
-        }
+        fieldNames.replaceAll(s -> s + "= :" + s);
 
         String sql = "UPDATE " + table + " SET " +
                 String.join(", ", fieldNames) + " " +
@@ -127,8 +138,6 @@ public abstract class AbstractGenericDao<T extends AbstractRecord> implements St
         return this.read(o.getId());
     }
 
-    ;
-
     @Override
     public void delete(Integer id) {
         validateId(id);
@@ -141,8 +150,6 @@ public abstract class AbstractGenericDao<T extends AbstractRecord> implements St
         }
     }
 
-    ;
-
     @Override
     public void validateId(Integer id) {
         if (id == null) {
@@ -153,11 +160,33 @@ public abstract class AbstractGenericDao<T extends AbstractRecord> implements St
         }
     }
 
-    static List<String> addColonBeforeString(List<String> targetList) {
-        List<String> result = new ArrayList<>();
-        for (String element : targetList) {
-            result.add(":" + element);
+    protected Integer[] getIDsFromSQLResult(String s) {
+        Integer[] result = {};
+        if (s == null) {
+            return result;
         }
+
+        s = s.substring(1, s.length() - 1);
+        if (s.equalsIgnoreCase("NULL")) {
+            return result;
+        }
+
+        String[] ids = s.split(",");
+        result = new Integer[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            try {
+                result[i] = Integer.parseInt(ids[i].trim());
+            } catch (NumberFormatException e) {
+                log.error("Parsing failed! >" + ids[i] + "< can not be an integer");
+            }
+        }
+
+        return result;
+    }
+
+    static List<String> addColonBeforeString(List<String> targetList) {
+        List<String> result = new ArrayList<>(targetList);
+        result.replaceAll(s -> ":" + s);
         return result;
     }
 }

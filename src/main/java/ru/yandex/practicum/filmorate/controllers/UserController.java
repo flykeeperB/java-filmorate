@@ -58,7 +58,7 @@ public class UserController extends AbstractController<User, UserStorage, UserSe
 
     @DeleteMapping("/{id}")
     @Override
-    public void delete(Integer id) {
+    public void delete(@PathVariable Integer id) {
         log.info("DELETE: /users");
         super.delete(id);
     }

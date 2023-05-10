@@ -43,7 +43,7 @@ public class UserDBStorage extends AbstractGenericDao<User> implements UserStora
         values.put("name", user.getName());
         values.put("login", user.getLogin());
         values.put("birthday", user.getBirthday().toString());
-        values.put("email", user.getEmail().toString());
+        values.put("email", user.getEmail());
         return values;
     }
 

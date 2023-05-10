@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.dataBase;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
@@ -14,24 +13,52 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 import java.util.HashMap;
+import java.util.Set;
 
 @Slf4j
 @Component("FilmDBStorage")
 public class FilmDBStorage extends AbstractGenericDao<Film> implements FilmStorage {
 
-    @Autowired
-    @Qualifier("MPARatingDBStorage")
     MPARatingDBStorage mpaRatingStorage;
 
-    @Autowired
-    @Qualifier("GenreDBStorage")
     GenreDBStorage genreStorage;
 
-    public FilmDBStorage(JdbcTemplate jdbcTemplate) {
+    @Autowired
+    public FilmDBStorage(JdbcTemplate jdbcTemplate, GenreDBStorage genreStorage, MPARatingDBStorage mpaRatingStorage) {
         super(jdbcTemplate, "films");
+        this.mpaRatingStorage = mpaRatingStorage;
+        this.genreStorage = genreStorage;
+    }
+
+    @Override
+    protected List<String> getFields() {
+        List<String> fields = new ArrayList<>();
+        fields.add(getTable() + ".*");
+        fields.add("ARRAY_AGG(film_genres.genre_id) as genres");
+        fields.add("COUNT(film_likes.user_id) as likes");
+        return fields;
+    }
+
+    @Override
+    protected String getSelectSQL() {
+
+        StringBuilder sqlBuilder = new StringBuilder(super.getSelectSQL());
+        sqlBuilder.append(" LEFT JOIN film_genres ON ");
+        sqlBuilder.append(getTable());
+        sqlBuilder.append(".id = film_genres.film_id");
+        sqlBuilder.append(" LEFT JOIN film_likes ON ");
+        sqlBuilder.append(getTable());
+        sqlBuilder.append(".id = film_likes.film_id");
+
+        return sqlBuilder.toString();
+    }
+
+    @Override
+    protected String getSelectGroupSQL() {
+        return " GROUP BY " + getTable() + ".id";
     }
 
     @Override
@@ -43,9 +70,12 @@ public class FilmDBStorage extends AbstractGenericDao<Film> implements FilmStora
                 .duration(resultSet.getInt("duration"))
                 .mpa(mpaRatingStorage.read(resultSet.getInt("mpa_rating_id")))
                 .build();
+
         result.setId(resultSet.getInt("id"));
-        result.setGenres(genreStorage.getGenresForFilm(result.getId()));
-        result.setLikes(getLikesByFilmId(result.getId()));
+
+        Integer[] genresIds = getIDsFromSQLResult(resultSet.getString("genres"));
+        result.setGenres(genreStorage.getGenres(genresIds));
+
         return result;
     }
 
@@ -95,14 +125,12 @@ public class FilmDBStorage extends AbstractGenericDao<Film> implements FilmStora
 
     @Override
     public List<Film> getPopularFilms(Integer limit) {
-        String sql = "SELECT COUNT(l.film_id) AS like_count, " +
-                "f.* " +
-                "FROM films AS f " +
-                "LEFT JOIN film_likes AS l ON l.film_id = f.id " +
-                "GROUP BY f.id " +
-                "ORDER BY like_count DESC ";
+        String sql = getSelectSQL() +
+                getSelectGroupSQL() +
+                " ORDER BY likes DESC";
+
         if (limit > 0) {
-            return jdbcTemplate.query(sql + "LIMIT ?", this::mapRow, limit);
+            return jdbcTemplate.query(sql + " LIMIT ?", this::mapRow, limit);
         }
         return jdbcTemplate.query(sql, this::mapRow);
     }
@@ -127,14 +155,6 @@ public class FilmDBStorage extends AbstractGenericDao<Film> implements FilmStora
         } else {
             throw new NotFoundException("Запись о лайке не обнаружена и не удалена.");
         }
-    }
-
-    private List<Integer> getLikesByFilmId(Integer filmId) {
-        String sql = "SELECT l.user_id " +
-                "FROM film_likes as l " +
-                "WHERE l.film_id=?";
-
-        return jdbcTemplate.queryForList(sql, Integer.TYPE, filmId);
     }
 
     private void addGenreLink(Integer filmId, Integer genreId) {
