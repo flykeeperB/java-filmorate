@@ -6,9 +6,13 @@ import java.util.HashSet;
 
 import javax.validation.constraints.*;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
+@AllArgsConstructor
 public class User extends AbstractRecord {
 
     @NotBlank(message = "Не задан адрес электронной почты")
@@ -25,7 +29,7 @@ public class User extends AbstractRecord {
     @PastOrPresent(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
 
-    private Set<Integer> friends = new HashSet<>();
+    private final Set<Integer> friends = new HashSet<>();
 
     public String getName() {
         if (name == null || name.isBlank()) {

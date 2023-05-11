@@ -4,10 +4,17 @@ import javax.validation.Valid;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
 
@@ -17,17 +24,15 @@ import java.util.List;
 public class UserController extends AbstractController<User, UserStorage, UserService> {
 
     @Autowired
-    public UserController(UserService userService) {
-        super(userService);
+    public UserController(UserService service) {
+        super(service);
     }
 
     @PostMapping
     @Override
     public User create(@Valid @RequestBody User user) {
         log.info("POST: /users");
-        super.create(user);
-        log.info("Сведения о пользоватеме внесены, присвоен идентификатор [" + user.getId() + "].");
-        return user;
+        return super.create(user);
     }
 
     @GetMapping("/{id}")
@@ -48,17 +53,14 @@ public class UserController extends AbstractController<User, UserStorage, UserSe
     @Override
     public User update(@Valid @RequestBody User user) {
         log.info("PUT: /users");
-        super.update(user);
-        log.info("Сведения о пользователе с идентификатором [" + user.getId() + "] обновлены.");
-        return user;
+        return super.update(user);
     }
 
     @DeleteMapping("/{id}")
     @Override
-    public void delete(Integer id) {
+    public void delete(@PathVariable Integer id) {
         log.info("DELETE: /users");
         super.delete(id);
-        log.info("Пользователь с идентификатором [" + id + "] удален.");
     }
 
     @GetMapping("/{id}/friends")

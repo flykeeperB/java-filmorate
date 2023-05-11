@@ -2,10 +2,18 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
 
@@ -17,17 +25,15 @@ import java.util.List;
 public class FilmController extends AbstractController<Film, FilmStorage, FilmService> {
 
     @Autowired
-    public FilmController(FilmService filmService) {
-        super(filmService);
+    public FilmController(FilmService service) {
+        super(service);
     }
 
     @PostMapping
     @Override
     public Film create(@Valid @RequestBody Film film) {
         log.info("POST: /films");
-        super.create(film);
-        log.info("Сведения о фильме внесены, присвоен идентификатор [" + film.getId() + "].");
-        return film;
+        return super.create(film);
     }
 
     @GetMapping("/{id}")
@@ -48,9 +54,7 @@ public class FilmController extends AbstractController<Film, FilmStorage, FilmSe
     @Override
     public Film update(@Valid @RequestBody Film film) {
         log.info("PUT: /films");
-        super.update(film);
-        log.info("Сведения о фильме с идентификатором [" + film.getId() + "] обновлены.");
-        return film;
+        return super.update(film);
     }
 
     @DeleteMapping("/{id}")
@@ -58,11 +62,10 @@ public class FilmController extends AbstractController<Film, FilmStorage, FilmSe
     public void delete(@PathVariable Integer id) {
         log.info("DELETE: /films");
         super.delete(id);
-        log.info("Фильм с идентификатором [" + id + "] удален.");
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "-1") int count) {
         log.info("GET: /films/popular");
         return service.getPopularFilms(count);
     }
@@ -71,13 +74,11 @@ public class FilmController extends AbstractController<Film, FilmStorage, FilmSe
     public void addLike(@PathVariable Integer id, @PathVariable Integer userId) {
         log.info("PUT: /films/" + id + "/like/" + userId);
         service.addLike(id, userId);
-        log.info("Сведения о лайке под фильмом добавлены.");
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLike(@PathVariable Integer id, @PathVariable Integer userId) {
         log.info("DELETE: /films/" + id + "/like/" + userId);
         service.deleteLike(id, userId);
-        log.info("Сведения о лайке под фильмом удалены.");
     }
 }
